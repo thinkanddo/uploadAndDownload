@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传</title>
+    <style>
+        .a-upload, .btn {
+            position: relative;
+            display: inline-block;
+            background: #D0EEFF;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #1E88C7;
+            text-decoration: none;
+            text-indent: 0;
+            line-height: 20px;
+            margin-top: 50px;
+        }
+        .a-upload input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+        }
+        .a-upload:hover {
+            background: #AADFFD;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div id="showUrl" class="showUrl"></div>
+<div id="showInfo" class="showInfo"></div>
+<form method="post" enctype="multipart/form-data" id="upload">
+    <a href="javascript:;" id="pic" class="a-upload">
+        <input type="file" name="uploadfile" multiple="multiple" onChange="fileChange(this)">
+        点击这里上传文件
+    </a>
+    <input type="button" value="提交" onclick="upload()">
+</form>
+
+<div id="downloan" class="btn"  title="下载文件名-down.zip" onclick="downloan()">下载</div>
+</body>
+<script>
+    function fileChange(f) {
+        let fileHtml = "";
+        if (f.files && f.files.length > 0) {
+            for (let i = 0; i < f.files.length; i++) {
+                fileHtml += `<div>${f.files[i].name}</div>`;
+            }
+        }
+        let showUrl = document.getElementById('showUrl').innerHTML = fileHtml;
+    }
+
+    function downloan() {
+        window.open("/goFile/fileDownload")
+        // //得到xhr对象
+        // let xhr = null;
+        // if (XMLHttpRequest) {
+        //     xhr = new XMLHttpRequest();
+        // } else {
+        //     xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        // }
+        // // TODO 把正确的url放这
+        // xhr.open("get", "/download", false); //设置提交方式，url，异步提交
+        //
+        // xhr.onload = function() {
+        //     let data = xhr.responseText; //得到返回值
+        // }
+        // xhr.setRequestHeader("Content-Type", 'application/json;charset=utf-8');
+        //
+        // xhr.onreadystatechange = function() {
+        //     if (xhr.readyState == 4) { // 4 = "loaded"
+        //         if (xhr.status == 200) { // 200 = OK
+        //             document.getElementById("showInfo").innerHTML = "下载成功";
+        //         } else {
+        //             alert("Problem retrieving XML data");
+        //         }
+        //     }
+        // }
+        // xhr.send();
+    }
+
+    function upload() {
+        let form = document.getElementById('upload')
+        let formData = new FormData(form);
+        //得到xhr对象
+        let xhr = null;
+        if (XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+        } else {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        // TODO 把正确的url放这
+        xhr.open("post", "/goFile/fileUpload", true); //设置提交方式，url，异步提交
+        //xhr.setRequestHeader("Content-Type","multipart/form-data");
+        xhr.onload = function() {
+            let data = xhr.responseText; //得到返回值
+        }
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) { // 4 = "loaded"
+                if (xhr.status == 200) { // 200 = OK
+                    document.getElementById('showUrl').innerHTML = '';
+                    document.getElementById("showInfo").innerHTML = "上传成功";
+                } else {
+                    alert("Problem retrieving XML data");
+                }
+            }
+        }
+        xhr.send(formData);
+    }
+</script>
+</html>
